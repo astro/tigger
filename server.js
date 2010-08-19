@@ -33,7 +33,6 @@ function setupClient() {
     client.on('end', function() {
 	if (clientOnline) {
 	    // we were online, we can retry
-	    client.end();
 	    process.nextTick(setupClient);
 	} else {
 	    // we didn't get beyond auth, die
