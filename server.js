@@ -38,6 +38,9 @@ function setupClient() {
 	    process.exit(1);
 	}
     });
+    client.on('error', function() {
+           process.exit(1);
+    });
     client.on('stanza', console.log);
 }
 
