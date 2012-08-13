@@ -115,7 +115,7 @@ function handlePartInBuffer(part) {
 
 Connect.createServer(
     Connect.logger(),
-    Connect.bodyDecoder(),
+    Connect.bodyParser(),
     Connect.router(function(app) {
 	// curl --data-urlencode "text=Hello, World" http://localhost:4000/msg
 	app.post('/msg', function(req, res) {

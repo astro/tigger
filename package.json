@@ -1,0 +1,7 @@
+{ "name": "mucbot"
+, "version": "0.0.2"
+, "dependencies": { "node-xmpp": ">=0.3"
+  		  , "connect": "<2"
+		  , "formidable": ">=1.0"
+                  }
+}
