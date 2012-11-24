@@ -3,6 +3,7 @@ var Connect = require('connect');
 var Formidable = require('formidable');
 var Crypto = require('crypto');
 var hqswitch = require('./hqswitch');
+var fs = require('fs');
 
 
 if (process.argv.length != 5) {
@@ -164,6 +165,11 @@ function handlePartInBuffer(part) {
     });
 }
 
+var lastSwitchChange = Math.floor(new Date().getTime() / 1000);
+hqswitch.on('switch', function() {
+    lastSwitchChange = Math.floor(new Date().getTime() / 1000);
+});
+
 Connect.createServer(
     Connect.logger(),
     Connect.bodyParser(),
@@ -197,6 +203,40 @@ Connect.createServer(
 		    res.writeHead(500, {});
 		    res.end(err.message);
 		}
+	    });
+	});
+
+	// Space API
+	app.get('/spaceapi.json', function(req, res) {
+	    function errback(e) {
+		res.writeHead(500, { "Content-Type": "text/plain" });
+		res.write(e.stack || e.message || e);
+		res.end();
+	    }
+
+	    fs.readFile('spaceapi.json', 'utf8', function(err, data) {
+		if (err)
+		    return errback(err);
+
+		var json;
+		try {
+		    json = JSON.parse(data);
+		    switch(hqswitch.state) {
+			case '0':
+			    json.open = false;
+			    break;
+			case '1':
+			case '2':
+			    json.open = true;
+			    break;
+		    }
+		    json.lastchange = lastSwitchChange;
+		} catch (e) {
+		    return errback(e);
+		}
+		res.writeHead(200, { "Content-Type": "application/json" });
+		res.write(JSON.stringify(json));
+		res.end();
 	    });
 	});
     }),

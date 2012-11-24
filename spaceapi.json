@@ -1,0 +1,24 @@
+{ "api": "0.12"
+, "space": "C3D2 HQ"
+, "logo": "http://www.c3d2.de/images/ck.png"
+, "icon": { "open": "http://coderwall-teams.s3.amazonaws.com/assets/images/27536377/479x321-fit-27536377-1Rxt7mlzb.jpg"
+          , "closed": "http://coderwall-teams.s3.amazonaws.com/assets/images/27535112/260xauto-27535112-1Rx8Ilaym.jpg"
+          }
+, "url": "http://www.c3d2.de/"
+, "contact": { "phone": "4935148484999"
+             , "twitter": "@pentaradio"
+             , "ml": "c3d2@mail.skyhub.de"
+             , "jabber": "c3d2@muc.hq.c3d2.de"
+             , "irc": "irc://irc.hq.c3d2.de/#c3d2"
+             }
+, "lat": 51.047075
+, "lon": 13.747619
+, "feeds": [{ "name": "www.C3D2.de News"
+            , "type": "application/rss+xml"
+            , "url": "http://www.c3d2.de/news-rss.xml"
+            },
+	    { "name": "www.C3D2.de News"
+            , "type": "application/atom+xml"
+            , "url": "http://www.c3d2.de/news-atom.xml"
+            }]
+}
