@@ -2,6 +2,7 @@ var XMPP = require('node-xmpp');
 var Connect = require('connect');
 var Formidable = require('formidable');
 var Crypto = require('crypto');
+var hqswitch = require('./hqswitch');
 
 
 if (process.argv.length != 5) {
@@ -86,6 +87,56 @@ function setAvatar(photo, type) {
 
     return presence.root().toString() + "\n";
 }
+
+function setFromSwitch(state) {
+    if (clientOnline) {
+	var text, status;
+	switch(state) {
+	    case "0":
+		text = "HQ is off.";
+		status = 'away';
+		break;
+	    case "1":
+		text = "HQ is on.";
+		status = '';
+		break;
+	    case "2":
+		text = "HQ is full.";
+		status = 'chat';
+		break;
+	    default:
+		text = "HQ is unknown?";
+		status = 'xa';
+		break;
+	}
+	client.send(new XMPP.Element('message',
+				     { type: 'groupchat',
+				       to: muc_room_jid
+				     }).
+		    c('body').t(text)
+		   );
+	client.send(new XMPP.Element('presence').
+		    c('status').t(text).up().
+		    c('show').t(status)
+		   );
+	client.send(new XMPP.Element('presence',
+				     { to: muc_room_jid }).
+		    c('status').t(text).up().
+		    c('show').t(status)
+		   );
+    }
+}
+var debounceSwitch;
+var DEBOUNCE_TIME = 1000;
+hqswitch.on('switch', function(state) {
+    if (debounceSwitch) {
+	clearTimeout(debounceSwitch);
+	debounceSwitch = null;
+    }
+    debounceSwitch = setTimeout(function() {
+	setFromSwitch(state);
+    }, DEBOUNCE_TIME);
+});
 
 /** Web stuff **/
 

@@ -3,5 +3,6 @@
 , "dependencies": { "node-xmpp": ">=0.3"
   		  , "connect": "<2"
 		  , "formidable": ">=1.0"
+		  , "serialport": ">=1.0.8"
                   }
 }
