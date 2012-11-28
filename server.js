@@ -120,6 +120,7 @@ function setFromSwitch(state) {
 	presence = setAvatar(AVATAR_IMGS[state], "image/png")(presence);
 	client.send(presence);
 	presence.to = muc_room_jid;
+	presence.c('x', { xmlns: NS_MUC });
 	client.send(presence);
     }
 }
