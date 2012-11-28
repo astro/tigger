@@ -81,13 +81,18 @@ function setAvatar(photo, type) {
 		c('BINVAL').t(photo64).up().
 		c('TYPE').t(type)
 	       );
-    var presence = makePresence().
-	c('x', { xmlns: NS_VCARD_UPDATE }).
-	c('photo').t(photo_sha1);
-    client.send(presence);
-
-    return presence.root().toString() + "\n";
+    return function(presence) {
+	return presence.
+	    c('x', { xmlns: NS_VCARD_UPDATE }).
+	    c('photo').t(photo_sha1).up().up();
+    };
 }
+
+var AVATAR_IMGS = {
+    '0': fs.readFileSync("hq_status/hq_is_off.ink.png"),
+    '1': fs.readFileSync("hq_status/hq_is_on.ink.png"),
+    '2': fs.readFileSync("hq_status/hq_is_full.ink.png")
+};
 
 function setFromSwitch(state) {
     if (clientOnline) {
@@ -116,15 +121,13 @@ function setFromSwitch(state) {
 				     }).
 		    c('body').t(text)
 		   );
-	client.send(new XMPP.Element('presence').
-		    c('status').t(text).up().
-		    c('show').t(status)
-		   );
-	client.send(new XMPP.Element('presence',
-				     { to: muc_room_jid }).
-		    c('status').t(text).up().
-		    c('show').t(status)
-		   );
+	var presence = new XMPP.Element('presence').
+		c('status').t(text).up().
+		c('show').t(status).up();
+	presence = setAvatar(AVATAR_IMGS[state], "image/png")(presence);
+	client.send(presence);
+	presence.to = muc_room_jid;
+	client.send(presence);
     }
 }
 var debounceSwitch;
@@ -186,24 +189,6 @@ Connect.createServer(
 		res.end('Only application/x-www-form-urlencoded and application/json are permitted. ' +
 			'There must be a `text\' field');
 	    }
-	});
-	// curl -F photo=@avatar.jpg http://localhost:4000/avatar
-	app.post('/avatar', function(req, res) {
-	    var form = new Formidable.IncomingForm();
-	    form.encoding = 'binary';
-	    form.bytesExpected = 16 * 1024;
-	    form.handlePart = handlePartInBuffer;
-	    form.parse(req, function(err, fields, forms) {
-		var photo;
-		if (!err && (photo = forms.photo)) {
-		    var info = setAvatar(photo.data, photo.mime);
-		    res.writeHead(200, { 'Content-Type': 'application/xml+xmpp' });
-		    res.end(info);
-		} else {
-		    res.writeHead(500, {});
-		    res.end(err.message);
-		}
-	    });
 	});
 
 	// Space API
