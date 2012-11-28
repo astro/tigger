@@ -29,6 +29,8 @@ function setupClient() {
 			     });
     client.on('online', function() {
 	clientOnline = true;
+	if (hqswitch.state)
+	    setFromSwitch(hqswitch.state);
     });
     client.on('end', function() {
 	if (clientOnline) {
