@@ -29,7 +29,6 @@ function setupClient() {
 			     });
     client.on('online', function() {
 	clientOnline = true;
-	client.send(makePresence());
     });
     client.on('end', function() {
 	if (clientOnline) {
@@ -47,14 +46,6 @@ function setupClient() {
 }
 
 setupClient();
-
-function makePresence() {
-    return new XMPP.Element('presence',
-			    { to: muc_jid
-			    }).
-	c('status').t('I obey to machines').up().
-	c('x', { xmlns: NS_MUC }).up();
-}
 
 function relayMessage(text) {
     if (clientOnline)
