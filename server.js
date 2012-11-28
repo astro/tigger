@@ -120,7 +120,7 @@ function setFromSwitch(state) {
 	var applyAvatarHash = setAvatar(AVATAR_IMGS[state], "image/png");
 	client.send(applyAvatarHash(presence));
 
-	presence = new XMPP.Element('presence', { to: muc_room_jid }).
+	presence = new XMPP.Element('presence', { to: muc_jid }).
 		c('status').t(text).up().
 		c('show').t(status).up().
 		c('x', { xmlns: NS_MUC }).up();
