@@ -45,6 +45,14 @@ function setupClient() {
            process.exit(1);
     });
     client.on('stanza', console.log);
+    // Auto-subscribe
+    client.on('stanza', function(stanza) {
+	if (stanza.attrs.type == 'subscribe')
+	    client.send(new XMPP.Element('presence',
+					 { to: stanza.attrs.from,
+					   type: 'subscribed'
+					 }));
+    });
 }
 
 setupClient();
