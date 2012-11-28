@@ -117,11 +117,14 @@ function setFromSwitch(state) {
 	var presence = new XMPP.Element('presence').
 		c('status').t(text).up().
 		c('show').t(status).up();
-	presence = setAvatar(AVATAR_IMGS[state], "image/png")(presence);
-	client.send(presence);
-	presence.to = muc_room_jid;
-	presence.c('x', { xmlns: NS_MUC });
-	client.send(presence);
+	var applyAvatarHash = setAvatar(AVATAR_IMGS[state], "image/png");
+	client.send(applyAvatarHash(presence));
+
+	presence = new XMPP.Element('presence', { to: muc_room_jid }).
+		c('status').t(text).up().
+		c('show').t(status).up().
+		c('x', { xmlns: NS_MUC }).up();
+	client.send(applyAvatarHash(presence));
     }
 }
 var debounceSwitch;
