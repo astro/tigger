@@ -224,7 +224,10 @@ Connect.createServer(
 		} catch (e) {
 		    return errback(e);
 		}
-		res.writeHead(200, { "Content-Type": "application/json" });
+		res.writeHead(200, { "Content-Type": "application/json",
+				     "Access-Control-Allow-Origin": "*",
+				     "Cache-Control": "no-cache"
+				   });
 		res.write(JSON.stringify(json));
 		res.end();
 	    });
