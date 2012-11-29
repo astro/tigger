@@ -235,3 +235,7 @@ Connect.createServer(
     }),
     Connect.errorHandler({ dumpExceptions: true, showStack: true })
 ).listen(4000, '::');
+
+process.on('SIGTERM', function() {
+    process.exit(0);
+});
