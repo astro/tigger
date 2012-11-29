@@ -224,6 +224,16 @@ Connect.createServer(
 		} catch (e) {
 		    return errback(e);
 		}
+		var temp;
+		try {
+		    temp = parseInt(fs.readFileSync("/sys/class/thermal/thermal_zone0/temp"), 10) / 1000;
+		} catch (e) { }
+		if (temp)
+		    json.sensors = {
+			temp: {
+			    "Raspberry Pi": temp + "C"
+			}
+		    };
 		res.writeHead(200, { "Content-Type": "application/json",
 				     "Access-Control-Allow-Origin": "*",
 				     "Cache-Control": "no-cache"
