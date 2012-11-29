@@ -1,8 +1,8 @@
 { "api": "0.12"
 , "space": "C3D2 HQ"
 , "logo": "http://www.c3d2.de/images/ck.png"
-, "icon": { "open": "http://coderwall-teams.s3.amazonaws.com/assets/images/27536377/479x321-fit-27536377-1Rxt7mlzb.jpg"
-          , "closed": "http://coderwall-teams.s3.amazonaws.com/assets/images/27535112/260xauto-27535112-1Rx8Ilaym.jpg"
+, "icon": { "open": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_on.ink.png"
+          , "closed": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_off.ink.png"
           }
 , "url": "http://www.c3d2.de/"
 , "contact": { "phone": "4935148484999"
