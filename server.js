@@ -214,10 +214,15 @@ Connect.createServer(
 		    switch(hqswitch.state) {
 			case '0':
 			    json.open = false;
+			    json.status = "HQ is off.";
 			    break;
 			case '1':
+			    json.open = true;
+			    json.status = "HQ is on.";
+			    break;
 			case '2':
 			    json.open = true;
+			    json.status = "HQ is full.";
 			    break;
 		    }
 		    json.lastchange = lastSwitchChange;
