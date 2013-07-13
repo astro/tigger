@@ -2,7 +2,10 @@ var XMPP = require('node-xmpp');
 var Connect = require('connect');
 var Formidable = require('formidable');
 var Crypto = require('crypto');
+var twitter = require('twitter');
 
+
+/** Args parsing **/
 
 if (process.argv.length != 5) {
     console.error("Parameters: <my-jid> <my-password> <full-muc-jid>");
@@ -31,6 +34,7 @@ function setupClient() {
     });
     client.on('end', function() {
 	if (clientOnline) {
+	    clientOnline = false;
 	    // we were online, we can retry
 	    process.nextTick(setupClient);
 	} else {
@@ -41,7 +45,32 @@ function setupClient() {
     client.on('error', function() {
            process.exit(1);
     });
-    client.on('stanza', console.log);
+    client.on('rawStanza', console.log);
+    // Auto-subscribe
+    client.on('stanza', function(stanza) {
+	if (stanza.name === 'presence' && stanza.attrs.type == 'subscribe')
+	    client.send(new XMPP.Element('presence',
+					 { to: stanza.attrs.from,
+					   type: 'subscribed'
+					 }));
+        else if (stanza.name === 'message' &&
+		 stanza.attrs.type === 'groupchat') {
+	    var text = stanza.getChildText('body') + "";
+	    var m;
+	    if ((m = text.match(/^tweet (.+)$/))) {
+		tweet(m[1], function(error) {
+		    var reply = new XMPP.Element('message', {
+			to: new XMPP.JID(stanza.attrs.from).bare().toString(),
+			type: 'groupchat'
+		    }).c('body');
+		    if (error)
+			reply.t("Fail whale: " + (error.message || error.stack || (error + "")));
+		    else
+			reply.t(TWEET_SUCCESS[Math.floor(TWEET_SUCCESS.length * Math.random())]);
+		});
+	    }
+	}
+    });
 }
 
 setupClient();
@@ -86,6 +115,50 @@ function setAvatar(photo, type) {
 
     return presence.root().toString() + "\n";
 }
+
+/** Twitter crap **/
+
+var twit = new twitter({
+    consumer_key: '',
+    consumer_secret: '',
+    access_token_key: '',
+    access_token_secret: ''
+});
+twit.stream('user', {}, function(stream) {
+    stream.on('data', function(data) {
+        console.log("user data", data);
+    });
+});
+
+function tweet(text, cb) {
+    twit.updateStatus(text, function(error, data) {
+	console.log("updateStatus cb", error, data);
+	cb(error);
+    });
+}
+
+var TWEET_SUCCESS = [
+    "You just spammed on Social Media",
+    "A big corporation says: Thank you for your content!",
+    "Successfully posted to Twtr",
+    "Successfully avoided fail whale",
+    "Sent",
+    "Ok",
+    "aber Facebook nicht vergessen",
+    "Your communication is now public to anyone",
+    "Tweeted",
+    "Twat",
+    "Piep",
+    "und identi.ca?",
+    "und wieder ein follower weniger",
+    "Result code: 0",
+    "Success",
+    "No error detected",
+    "Went through",
+    "the internet is dying",
+    "everyone is really curious on what you for breakfast",
+    "✔", "👍"
+];
 
 /** Web stuff **/
 
