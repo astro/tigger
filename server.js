@@ -2,7 +2,7 @@ var XMPP = require('node-xmpp');
 var Connect = require('connect');
 var Formidable = require('formidable');
 var Crypto = require('crypto');
-var twitter = require('twitter');
+var twitter = require('ntwitter');
 
 
 /** Args parsing **/
@@ -67,6 +67,7 @@ function setupClient() {
 			reply.t("Fail whale: " + (error.message || error.stack || (error + "")));
 		    else
 			reply.t(TWEET_SUCCESS[Math.floor(TWEET_SUCCESS.length * Math.random())]);
+		    client.send(reply);
 		});
 	    }
 	}
