@@ -25,26 +25,36 @@ var clientOnline = false;
 function setupClient() {
     clientOnline = false;
     client = new XMPP.Client({ jid: jid,
-			       password: pass
+			       password: pass,
+			       reconnect: true
 			     });
     client.on('online', function() {
+	console.log("online");
 	clientOnline = true;
-	if (hqswitch.state)
-	    setFromSwitch(hqswitch.state);
+        setFromSwitch(hqswitch.state);
+    });
+    client.on('error', function(e) {
+console.log("client error", e.message || e);
+//process.nextTick(setupClient);
     });
     client.on('end', function() {
+console.log("client end");
 	if (clientOnline) {
 	    // we were online, we can retry
+	    clientOnline = true;
 	    process.nextTick(setupClient);
 	} else {
 	    // we didn't get beyond auth, die
 	    process.exit(1);
 	}
     });
-    client.on('error', function() {
+    client.on('error', function(e) {
+console.log(e);
            process.exit(1);
     });
-    client.on('stanza', console.log);
+    client.on('rawStanza', function(stanza) {
+	console.log("<<", stanza.toString());
+    });
     // Auto-subscribe
     client.on('stanza', function(stanza) {
 	if (stanza.attrs.type == 'subscribe')
@@ -95,19 +105,28 @@ var AVATAR_IMGS = {
     '2': fs.readFileSync("hq_status/hq_is_full.ink.png")
 };
 
+var oldState;
 function setFromSwitch(state) {
+if (!clientOnline) return;
+
+    if (state === oldState)
+        return;
+console.log("setFromSwitch", oldState, state);
+    oldState = state;
+
     if (clientOnline) {
+/* check if client is still "online"*/
 	var text, status;
 	switch(state) {
-	    case "0":
+	    case 0:
 		text = "HQ is off.";
 		status = 'away';
 		break;
-	    case "1":
+	    case 1:
 		text = "HQ is on.";
 		status = '';
 		break;
-	    case "2":
+	    case 2:
 		text = "HQ is full.";
 		status = 'chat';
 		break;
@@ -126,14 +145,22 @@ function setFromSwitch(state) {
 		c('status').t(text).up().
 		c('show').t(status).up();
 	var applyAvatarHash = setAvatar(AVATAR_IMGS[state], "image/png");
-	client.send(applyAvatarHash(presence));
+	presence = applyAvatarHash(presence);
+console.log("presence", presence.root().toString());
+	client.send(presence);
 
+console.log("join muc", muc_jid);
 	presence = new XMPP.Element('presence', { to: muc_jid }).
 		c('status').t(text).up().
 		c('show').t(status).up().
 		c('x', { xmlns: NS_MUC }).up();
 	client.send(applyAvatarHash(presence));
     }
+/*
+  else {
+    process.nextTick(client.reconnect);
+  }
+*/
 }
 var debounceSwitch;
 var DEBOUNCE_TIME = 1000;
@@ -212,15 +239,15 @@ Connect.createServer(
 		try {
 		    json = JSON.parse(data);
 		    switch(hqswitch.state) {
-			case '0':
+			case 0:
 			    json.open = false;
 			    json.status = "HQ is off.";
 			    break;
-			case '1':
+			case 1:
 			    json.open = true;
 			    json.status = "HQ is on.";
 			    break;
-			case '2':
+			case 2:
 			    json.open = true;
 			    json.status = "HQ is full.";
 			    break;
