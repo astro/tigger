@@ -279,6 +279,18 @@ Connect.createServer(
 		res.end();
 	    });
 	});
+
+	app.get('/status.png', function(req, res) {
+	    var location;
+	    if (hqswitch.state === 2)
+		location = "https://raw.github.com/astro/tigger/master/hq_status/hq_is_full.ink.png";
+	    else if (hqswitch.state === 1)
+		location = "https://raw.github.com/astro/tigger/master/hq_status/hq_is_on.ink.png";
+	    else
+		location = "https://raw.github.com/astro/tigger/master/hq_status/hq_is_off.ink.png";
+	    res.writeHead(302, { "Location": location });
+	    res.end();
+	});
     }),
     Connect.errorHandler({ dumpExceptions: true, showStack: true })
 ).listen(4000, '::');
