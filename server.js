@@ -240,19 +240,19 @@ Connect.createServer(
 		    json = JSON.parse(data);
 		    switch(hqswitch.state) {
 			case 0:
-			    json.open = false;
-			    json.status = "HQ is off.";
+			    json.state.open = false;
+			    json.state.message = "HQ is off.";
 			    break;
 			case 1:
-			    json.open = true;
-			    json.status = "HQ is on.";
+			    json.state.open = true;
+			    json.state.message = "HQ is on.";
 			    break;
 			case 2:
-			    json.open = true;
-			    json.status = "HQ is full.";
+			    json.state.open = true;
+			    json.state.message = "HQ is full.";
 			    break;
 		    }
-		    json.lastchange = lastSwitchChange;
+		    json.state.lastchange = lastSwitchChange;
 		} catch (e) {
 		    return errback(e);
 		}
@@ -262,10 +262,15 @@ Connect.createServer(
 		} catch (e) { }
 		if (temp)
 		    json.sensors = {
-			temp: {
-			    "Raspberry Pi": temp + "C"
-			}
+			temperature: [
+			    { name: "beere.hq.c3d2.de",
+			      value: temp,
+			      unit: "°C",
+			      location: "Raspberry Pi neben der Tür"
+			    }
+			]
 		    };
+
 		res.writeHead(200, { "Content-Type": "application/json",
 				     "Access-Control-Allow-Origin": "*",
 				     "Cache-Control": "no-cache"
