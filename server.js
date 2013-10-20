@@ -252,7 +252,9 @@ Connect.createServer(
 			    json.state.message = "HQ is full.";
 			    break;
 		    }
-		    json.state.lastchange = lastSwitchChange;
+		    json.lastchange = json.state.lastchange = lastSwitchChange;
+		    json.open = json.state.open;
+		    json.status = json.state.message;
 		} catch (e) {
 		    return errback(e);
 		}

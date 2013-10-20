@@ -1,6 +1,9 @@
 { "api": "0.13"
 , "space": "C3D2 HQ"
 , "logo": "http://www.c3d2.de/images/ck.png"
+, "icon": { "open": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_on.ink.png"
+	  , "closed": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_off.ink.png"
+	  }
 , "state": { "icon": { "open": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_on.ink.png"
 		     , "closed": "https://raw.github.com/astro/tigger/master/hq_status/hq_is_off.ink.png"
 		     }
