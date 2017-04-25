@@ -1,8 +1,8 @@
-{ "name": "mucbot"
-, "version": "0.0.2"
-, "dependencies": { "node-xmpp": ">=0.3"
-  		  , "connect": "<2"
-		  , "formidable": ">=1.0"
-		  , "gpio": ">=0.2.4"
-                  }
+{
+  "name": "mucbot",
+  "version": "0.0.2",
+  "dependencies": {
+    "node-fetch": "^1.6.3",
+    "node-xmpp-client": "^3.2.0"
+  }
 }
