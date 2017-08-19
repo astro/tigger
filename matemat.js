@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const leven = require('leven');
 
 const MATEMAT_URL = "http://matemat.hq.c3d2.de";
 
@@ -69,9 +70,16 @@ function matematBuy(user, item, amount) {
         }).get())
         .then(users => {
             // Find user
-            const href = users.filter(
-                ({ name }) => name.toLocaleLowerCase() == userLower
-            ).map(({ href }) => href)[0];
+            const href = users.map(({ href, name }) =>
+                                   ({ href,
+                                      distance: leven(userLower,
+                                                      name
+                                                      .toLocaleLowerCase()),
+                                    }))
+                  .filter(a => { console.log('d', a); return a; })
+                  .filter(({ distance }) => distance < 3)
+                  .sort((a, b) => a.distance - b.distance)
+                  .map(({ href }) => href)[0];
             if (href) {
                 return agent(href);
             } else {
@@ -86,9 +94,17 @@ function matematBuy(user, item, amount) {
         }).get())
         .then(items => {
             // Find item
-            const href = items.filter(
-                ({ name }) => name.toLocaleLowerCase().replace(ITEM_IGNORE, "") == itemMangled
-            ).map(({ href }) => href)[0];
+            const href = items.map(({ href, name }) =>
+                                   ({ href,
+                                      distance: leven(itemMangled,
+                                                      name
+                                                      .toLocaleLowerCase()
+                                                      .replace(ITEM_IGNORE, "")),
+                                    })
+                                  )
+                  .filter(({ distance }) => distance < 4)
+                  .sort((a, b) => a.distance - b.distance)
+                  .map(({ href }) => href)[0];
             if (href) {
                 buyUrl = href;
                 return agent(buyUrl);
