@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const XMPPClient = require('./xmpp_client');
 
 const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
+const MATEMAT_URL = "http://matemat.hq.c3d2.de";
 
 
 process.on('SIGTERM', function() {
@@ -24,6 +25,11 @@ cl.joinRoom(muc_jid);
 
 function spaceAPI() {
     return fetch(SPACEAPI_URL)
+        .then(res => res.json());
+}
+
+function matematSummary() {
+    return fetch(`${MATEMAT_URL}/summary.json`)
         .then(res => res.json());
 }
 
@@ -64,5 +70,13 @@ cl.on('muc:message', (muc, nick, text) => {
         });
     } else if (/^hello/i.test(text) || /^hi$/i.test(text)) {
         cl.sendRoomMessage(muc, `${nick}: Hi!`);
+    } else if (/^\+hq mate$/i.test(text) || /^was gibt es\?$/i.test(text)) {
+        matematSummary().then(summary => {
+            const lines = summary
+                  .filter(({ value }) => value > 0)
+                  .map(({ value, name }) => `${value}× ${name}`)
+                  .join("\n");;
+            cl.sendRoomMessage(muc, `Wir haben:\n${lines}`);
+        });
     }
 });
