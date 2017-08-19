@@ -30,7 +30,7 @@ function spaceAPI() {
 cl.on('muc:message', (muc, nick, text) => {
     var m;
 
-    if (text == "+hq status") {
+    if (/^\+hq status$/i.test(text)) {
         spaceAPI().then(json => {
             if (json.state &&
                 json.state.hasOwnProperty('open') &&
@@ -40,7 +40,7 @@ cl.on('muc:message', (muc, nick, text) => {
                 cl.sendRoomMessage(muc, `${nick}: [${open ? "OPEN" : "CLOSED"}] ${json.state.message}`);
             }
         });
-    } else if (text == "+hq sensors") {
+    } else if (/^\+hq sensors$/i.test(text)) {
         spaceAPI().then(json => {
             const categories = Object.keys(json.sensors || {});
             cl.sendRoomMessage(muc, `${nick}: +hq sensors <${categories.join(" | ")}>`);
