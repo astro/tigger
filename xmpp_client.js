@@ -1,10 +1,11 @@
+const EventEmitter = require('events');
 const XMPP = require('node-xmpp-client');
 
 const NS_MUC = 'http://jabber.org/protocol/muc';
 const NS_DELAY = 'urn:xmpp:delay';
 const NS_X_DELAY = 'jabber:x:delay';
 
-module.exports = class XMPPClient extends process.EventEmitter {
+module.exports = class XMPPClient extends EventEmitter {
     constructor(jid, pass) {
         super();
 
