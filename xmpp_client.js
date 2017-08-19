@@ -23,6 +23,8 @@ module.exports = class XMPPClient extends EventEmitter {
 	    password: this.pass,
 	    reconnect: true,
 	});
+        // Keep-alive:
+        setInterval(() => this.client.send(" "), 60000);
         this.client.on('online', () => {
             this.online = true;
             this.sendPresence();
