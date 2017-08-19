@@ -2,6 +2,7 @@
   "name": "mucbot",
   "version": "0.0.2",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "node-fetch": "^1.6.3",
     "node-xmpp-client": "^3.2.0"
   }
