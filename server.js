@@ -91,7 +91,5 @@ cl.on('muc:message', (muc, nick, text) => {
 		cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld es gibt ja nicht unendlich viele Voucher!`)
 	} else if ((text.match(/voucher/i) != -1) && (text.search(/[ck]ongress/i) != -1)) {
 		cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du eine Voucher haben möchtest!`);
-	} else if ((text.search(/voucher/i) != -1) && (text.search(/[ck]ongress/i) != -1) && (text.search(/wiki/i) != -1)) {
-		cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld es gibt ja nicht unendlich viele Voucher!`)
 	}
 });
