@@ -87,9 +87,9 @@ cl.on('muc:message', (muc, nick, text) => {
         buyMate(muc, nick, m[2], parseInt(m[1]));
     } else if ((m = text.match(/^[\+\?\!\/\\]hq mate (.+)$/i)) || (m = text.match(/^ich kaufe eine? (.+)$/i))) {
         buyMate(muc, nick, m[1], 1);
-    } else if (/voucher/i.test(text) && /[ck]ongress/i.test(text) && /wiki/i.test(text)) {
+    } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text) && (nick != "null")) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
-    } else if (/voucher/i.test(text) && /[ck]ongress/i.test(text)) {
+    } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && (nick != "null")) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/34C3#Erfa-Voucher`);
     }
 });
