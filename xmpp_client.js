@@ -47,16 +47,28 @@ module.exports = class XMPPClient extends EventEmitter {
                 const body = stanza.getChildText('body');
                 console.log(`[${mucJid}] <${fromNick}> ${body || ""}`);
                 if (body && !stanza.getChild('delay', NS_DELAY) && !stanza.getChild('x', NS_X_DELAY)) {
+                    var history = this.rooms[mucJid].history;
+                    history.push({
+                        nick: fromNick,
+                        message: body,
+                    });
+                    if (history.length > 1000) {
+                        this.rooms[mucJid].history = history.slice(-1000);
+                    }
                     this.emit('muc:message', mucJid, fromNick, body);
                 }
             }
         });
     }
 
+    getHistory(muc) {
+        return this.rooms[muc].history;
+    }
+
     sendPresence() {
         this.client.send(this.generatePresence());
     }
-    
+
     generatePresence() {
 	const presence = new XMPP.Element('presence');
         if (this.presence.status) {
@@ -74,6 +86,7 @@ module.exports = class XMPPClient extends EventEmitter {
         if (!this.rooms[mucJid]) {
             this.rooms[mucJid] = {
                 nick: jid.resource,
+                history: [],
             };
         }
         const room = this.rooms[mucJid];

@@ -5,6 +5,7 @@ const XMPPClient = require('./xmpp_client');
 const { matematSummary, matematBuy } = require('./matemat');
 
 const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
+const { spawn } = require('child_process');
 
 
 process.on('SIGTERM', function() {
@@ -36,6 +37,43 @@ function buyMate(muc, user, item, amount) {
         .catch(e =>
                cl.sendRoomMessage(muc, `Oops, ${e.message}`)
               )
+}
+
+function correctMessage(muc, nick, regex) {
+    const history = cl.getHistory(muc);
+    var lastMessage = "";
+    var foundRegexMessage = false;
+    for (var i = history.length; i-- > 0; ) {
+        if (history[i].nick === nick) {
+            if (foundRegexMessage) {
+                lastMessage = history[i].message;
+                break;
+            }
+            foundRegexMessage = true;
+        }
+    }
+
+    if (lastMessage === "") {
+        cl.sendRoomMessage(muc, `Keine letzte Nachricht…`);
+    } else {
+        // use actual sed command to have a timeout and prevent ReDDOS
+        var child = spawn("sed", [regex]);
+
+        child.stdin.write(lastMessage);
+        child.stdin.end();
+
+        child.stdout.on('data', (data) => {
+            cl.sendRoomMessage(muc, `${nick} meint: ${data}`);
+        });
+
+        setTimeout(function(){ child.kill()}, 1000);
+
+        child.on('close', (code) => {
+            if (code !== 0) {
+                console.log(`sed process exited with code ${code}`);
+            }
+        });
+    }
 }
 
 cl.on('muc:message', (muc, nick, text) => {
@@ -87,6 +125,8 @@ cl.on('muc:message', (muc, nick, text) => {
         buyMate(muc, nick, m[2], parseInt(m[1]));
     } else if ((m = text.match(/^[\+\?\!\/\\]hq mate (.+)$/i)) || (m = text.match(/^ich kaufe eine? (.+)$/i))) {
         buyMate(muc, nick, m[1], 1);
+    } else if (/^s\/([^/]*)\/([^/]*)\/$/.test(text)) {
+        correctMessage(muc, nick, text);
     } else if (/voucher/i.test(text) && /[ck]ongress/i.test(text) && /wiki/i.test(text)) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if (/voucher/i.test(text) && /[ck]ongress/i.test(text)) {
