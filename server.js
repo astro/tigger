@@ -125,6 +125,8 @@ cl.on('muc:message', (muc, nick, text) => {
         buyMate(muc, nick, m[2], parseInt(m[1]));
     } else if ((m = text.match(/^[\+\?\!\/\\]hq mate (.+)$/i)) || (m = text.match(/^ich kaufe eine? (.+)$/i))) {
         buyMate(muc, nick, m[1], 1);
+    } else if (text.toLowerCase().indexOf(cl.rooms[muc].nick) !== -1) {
+        cl.sendRoomMessage(muc, 'I am famous!');
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text)) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
