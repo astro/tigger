@@ -45,12 +45,18 @@ module.exports = class XMPPClient extends EventEmitter {
                 const mucJid = from.bare().toString();
                 const fromNick = from.resource;
                 const body = stanza.getChildText('body');
-                console.log(`[${mucJid}] <${fromNick}> ${body || ""}`);
                 const isHistorical = !! (stanza.getChild('delay', NS_DELAY) || stanza.getChild('x', NS_X_DELAY));
                 const room = this.rooms[mucJid];
                 const isSelf = room && fromNick === room.nick;
                 if (body && room && !isSelf && !isHistorical) {
+                    console.log(`[${mucJid}] <${fromNick}> ${body || ""}`);
                     this.emit('muc:message', mucJid, fromNick, body);
+                } else if (isHistorical) {
+                    console.log(`[Hist] <${fromNick}> ${body || ""}`);
+                } else if (isSelf) {
+                    console.log(`[Self] <${fromNick}> ${body || ""}`);
+                } else {
+                    console.log(`[????] <${fromNick}> ${body || ""}`);
                 }
             }
         });
