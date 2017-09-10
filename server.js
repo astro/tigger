@@ -1,3 +1,4 @@
+const cheerio = require('cheerio');
 const Crypto = require('crypto');
 const fs = require('fs');
 const fetch = require('node-fetch');
@@ -6,6 +7,7 @@ const { matematSummary, matematBuy } = require('./matemat');
 
 const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
 
+const TEST_URL_REGEX = /([-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?)/gi;
 
 process.on('SIGTERM', function() {
     process.exit(0);
@@ -60,6 +62,25 @@ function correctMessage(muc, nick, regexp, replacement) {
     }
 }
 
+function fetchPageTitle(muc, url) {
+  if (!/^https?:\/\//.test(url)) {
+    var url = `http://${url}`;
+  }
+  fetch(url)
+    .then(res => res.text())
+    .then(body => {
+        const $ = cheerio.load(body);
+        var title = $('title').text();
+        if (title.length === 0) {
+          return;
+        }
+        if (title.length > 100) {
+          title = `${title.substring(1, 100)}…`;
+        }
+        cl.sendRoomMessage(muc, title);
+    });
+}
+
 cl.on('muc:message', (muc, nick, text) => {
     var m;
 
@@ -111,6 +132,8 @@ cl.on('muc:message', (muc, nick, text) => {
         buyMate(muc, nick, m[1], 1);
     } else if (text.toLowerCase().indexOf(cl.rooms[muc].nick) !== -1) {
         cl.sendRoomMessage(muc, 'I am famous!');
+    } else if (m = text.match(TEST_URL_REGEX)) {
+        fetchPageTitle(muc, m[0]);
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text)) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
