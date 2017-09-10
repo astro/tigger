@@ -5,7 +5,6 @@ const XMPPClient = require('./xmpp_client');
 const { matematSummary, matematBuy } = require('./matemat');
 
 const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
-const { spawn } = require('child_process');
 
 
 process.on('SIGTERM', function() {
@@ -39,7 +38,7 @@ function buyMate(muc, user, item, amount) {
               )
 }
 
-function correctMessage(muc, nick, regex) {
+function correctMessage(muc, nick, regexp, replacement) {
     const history = cl.getHistory(muc);
     var lastMessage = "";
     var foundRegexMessage = false;
@@ -56,23 +55,8 @@ function correctMessage(muc, nick, regex) {
     if (lastMessage === "") {
         cl.sendRoomMessage(muc, `Keine letzte Nachricht…`);
     } else {
-        // use actual sed command to have a timeout and prevent ReDDOS
-        var child = spawn("sed", [regex]);
-
-        child.stdin.write(lastMessage);
-        child.stdin.end();
-
-        child.stdout.on('data', (data) => {
-            cl.sendRoomMessage(muc, `${nick} meint: ${data}`);
-        });
-
-        setTimeout(function(){ child.kill()}, 1000);
-
-        child.on('close', (code) => {
-            if (code !== 0) {
-                console.log(`sed process exited with code ${code}`);
-            }
-        });
+        const result = lastMessage.replace(regexp, replacement);
+        cl.sendRoomMessage(muc, `${nick} meint: ${result}`);
     }
 }
 
@@ -129,7 +113,12 @@ cl.on('muc:message', (muc, nick, text) => {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/34C3#Erfa-Voucher`);
-    } else if (/^s\/([^/]*)\/([^/]*)\/$/.test(text)) {
-        correctMessage(muc, nick, text);
+    } else if ((m = text.match(/^s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
+        try {
+            var regexp = new RegExp(m[1], m[3]);
+            correctMessage(muc, nick, regexp, m[2]);
+        } catch (e) {
+            console.error(e.stack);
+        }
     }
 });
