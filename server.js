@@ -133,7 +133,7 @@ cl.on('muc:message', (muc, nick, text) => {
     } else if (text.toLowerCase().indexOf(cl.rooms[muc].nick) !== -1) {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (m = text.match(TEST_URL_REGEX)) {
-        fetchPageTitle(muc, m[1]);
+        fetchPageTitle(muc, m[0]);
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text)) {
 	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
