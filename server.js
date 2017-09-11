@@ -72,10 +72,10 @@ function fetchPageTitle(muc, url) {
         const $ = cheerio.load(body);
         var title = $('title').text();
         if (title.length === 0) {
-          return;
+            return;
         }
         if (title.length > 100) {
-          title = `${title.substring(1, 100)}…`;
+            title = `${title.substring(0, 100)}…`;
         }
         cl.sendRoomMessage(muc, title);
     });
