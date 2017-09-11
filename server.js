@@ -70,7 +70,7 @@ function fetchPageTitle(muc, url) {
     .then(res => res.text())
     .then(body => {
         const $ = cheerio.load(body);
-        var title = $('title').text();
+        var title = $('title').text().replace(/^\s+|\s+$/g, '');
         if (title.length === 0) {
             return;
         }
