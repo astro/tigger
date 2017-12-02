@@ -81,6 +81,16 @@ function fetchPageTitle(muc, url) {
     });
 }
 
+function sendBitcoinPrice(muc) {
+  fetch("https://api.coindesk.com/v1/bpi/currentprice/euro.json")
+    .then(res => res.json())
+    .then(json => {
+       const euro = json.bpi.EUR.rate_float;
+       const kollemate = Math.floor(euro / 1.5);
+       cl.sendRoomMessage(muc, `BTC: ${kollemate} x kolle-mate Flaschen / ${euro.toFixed(2)}€`);
+    });
+}
+
 cl.on('muc:message', (muc, nick, text) => {
     var m;
 
@@ -132,12 +142,14 @@ cl.on('muc:message', (muc, nick, text) => {
         buyMate(muc, nick, m[1], 1);
     } else if (text.toLowerCase().indexOf(cl.rooms[muc].nick) !== -1) {
         cl.sendRoomMessage(muc, 'I am famous!');
+    } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
+        sendBitcoinPrice(muc);
     } else if (m = text.match(TEST_URL_REGEX)) {
         fetchPageTitle(muc, m[0]);
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text)) {
-	cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
+        cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
-	cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/34C3#Erfa-Voucher`);
+        cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/34C3#Erfa-Voucher`);
     } else if ((m = text.match(/^s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
         try {
             var regexp = new RegExp(m[1], m[3]);
