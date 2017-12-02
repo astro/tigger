@@ -2,7 +2,7 @@
   "name": "tigger",
   "description": "A XMPP MUC bot",
   "version": "0.0.2",
-  "license": "MIT",
+  "license": "AGPL",
   "repository" : {
     "type" : "git",
     "url" : "https://github.com/astro/tigger"
