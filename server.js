@@ -84,23 +84,22 @@ function fetchPageTitle(muc, url) {
 const DEFAULT_MATE_PRICE = 1.5;
 
 function sendBitcoinPrice(muc) {
-    fetch("http://matemat.hq.c3d2.de/summary.json")
-        .then(function(res){
-            return res.json();
-        }).then(function(json){
-            let kolleMate = json.filter(function(value){ return value.name=="kolle-mate";})[0];
+    let price = fetch("http://matemat.hq.c3d2.de/summary.json")
+        .then(res => res.json())
+        .then(json => {
+            let kolleMate = json.filter(value => value.name == "kolle-mate")[0];
             let price = kolleMate && kolleMate.price || DEFAULT_MATE_PRICE;
             return price;
-        }).catch(function() {
-            return DEFAULT_MATE_PRICE;
-        }).then(function(price) {
-            fetch("https://api.coindesk.com/v1/bpi/currentprice/euro.json")
-                .then(res => res.json())
-                .then(json => {
-                    const euro = json.bpi.EUR.rate_float;
-                    const kollemate = Math.floor(euro / price);
-                    cl.sendRoomMessage(muc, `BTC: ${kollemate} x kolle-mate Flaschen / ${euro.toFixed(2)}€`);
-                });
+        }).catch(() => DEFAULT_MATE_PRICE);
+
+    fetch("https://api.coindesk.com/v1/bpi/currentprice/euro.json")
+        .then(res => res.json())
+        .then(json =>  json.bpi.EUR.rate_float)
+        .then(euro => {
+            price.then(price => {
+                const kollemate = Math.floor(euro / price);
+                cl.sendRoomMessage(muc, `BTC: ${kollemate} Flaschen Kolle-Mate (${euro.toFixed(2)}€)`);
+            });
         });
 }
 
