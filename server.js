@@ -138,7 +138,7 @@ cl.on('muc:message', (muc, nick, text) => {
                 cl.sendRoomMessage(muc, text);
             }
         });
-    } else if (/^hello/i.test(text) || /^hi$/i.test(text)) {
+    } else if (/^hello/i.test(text) || /^hi$/i.test(text) || /^hallo/i.test(text)) {
         cl.sendRoomMessage(muc, `${nick}: Hi!`);
     } else if (/^[\+\?\!\/\\]hq mate$/i.test(text) || /^was gibt es\?$/i.test(text)) {
         matematSummary().then(summary => {
