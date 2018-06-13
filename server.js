@@ -3,6 +3,7 @@ const Crypto = require('crypto');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const XMPPClient = require('./xmpp_client');
+const { spawn } = require('child_process');
 const { matematSummary, matematBuy } = require('./matemat');
 
 const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
@@ -101,6 +102,28 @@ function sendBitcoinPrice(muc) {
                 cl.sendRoomMessage(muc, `BTC: ${kollemate} Flaschen Kolle-Mate (${euro.toFixed(2)}€)`);
             });
         });
+} 
+
+function evalNix(muc, expr) {
+    const nix = spawn('nix', [
+        'eval', '--json',
+        '--option', 'cores', '0',
+        '--option', 'restrict-eval', 'true',
+        '--option', 'sandbox', 'true',
+        '--option', 'timeout', '3',
+        '--option', 'max-jobs', '0',
+        '--option', 'allow-import-from-derivation', 'false',
+        '--option', 'allowed-uris', '',
+        `(with import <nixpkgs> {}; ${expr})`
+    ]);
+    nix.stdout.on('data', (data) => {
+      cl.sendRoomMessage(muc, `${data}`);
+    });
+    nix.on('close', (code) => {
+        if (code !== 0) {
+            console.log(`nix process exited with code ${code}`);
+        }
+    });
 }
 
 cl.on('muc:message', (muc, nick, text) => {
@@ -156,6 +179,8 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
+    } else if (m = text.match(/^>(.*)/)) {
+        evalNix(muc, m[1]);
     } else if (m = text.match(TEST_URL_REGEX)) {
         fetchPageTitle(muc, m[0]);
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text)) && /wiki/i.test(text)) {
