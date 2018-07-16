@@ -81,7 +81,7 @@ function fetchPageTitle(muc, url) {
     });
 }
 
-const DEFAULT_MATE_PRICE = 1.5;
+const DEFAULT_MATE_PRICE = 1.00;
 
 function sendBitcoinPrice(muc) {
     let price = fetch("http://matemat.hq.c3d2.de/summary.json")
