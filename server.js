@@ -110,7 +110,7 @@ function sendElbePegel(muc) {
 			const pegel = json[json.length-1].value;
 			cl.sendRoomMessage(muc, `Pegel: ${pegel} cm`)
 		}).catch(() => {
-			cl.sendRoomMessage(muc, `Der Pegelstand konnte leider nicht abgerugen werden, bitte versuch es später nocheinmal!`)
+			cl.sendRoomMessage(muc, `Der Pegelstand konnte leider nicht abgerufen werden, bitte versuch es später noch einmal!`)
 		});
 }
 
