@@ -103,6 +103,17 @@ function sendBitcoinPrice(muc) {
         });
 }
 
+function sendElbePegel(muc) {
+	fetch("https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/DRESDEN/W/measurements.json")
+		.then(res => res.json())
+		.then(json => {
+			const pegel = json[json.length-1].value;
+			cl.sendRoomMessage(muc, `Pegel: ${pegel} cm`)
+		}).catch(() => {
+			cl.sendRoomMessage(muc, `Der Pegelstand konnte leider nicht abgerufen werden, bitte versuch es später noch einmal!`)
+		});
+}
+
 cl.on('muc:message', (muc, nick, text) => {
     var m;
 
@@ -162,6 +173,8 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /34c3/i.test(text))) {
         cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/34C3#Erfa-Voucher`);
+	} else if (/^[\+\?\!\/\\]elbe$/i.test(text)) {
+		sendElbePegel(muc);
     } else if ((m = text.match(/^s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
         try {
             var regexp = new RegExp(m[1], m[3]);
