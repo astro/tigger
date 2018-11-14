@@ -172,7 +172,7 @@ cl.on('muc:message', (muc, nick, text) => {
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /35c3/i.test(text)) && /wiki/i.test(text)) {
         cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /35c3/i.test(text))) {
-        cl.sendRoomMessage(muc, `${nick}: Bitte trage dich doch im Wiki ein wenn du einen Voucher haben möchtest!\nhttps://wiki.c3d2.de/5C3#Erfa-Voucher`);
+        cl.sendRoomMessage(muc, `${nick}: Bitte sieh doch im Wiki nach und koordiniere dein Anliegen dort!\nhttps://wiki.c3d2.de/35C3#Erfa-Voucher`);
     } else if (/^[\+\?\!\/\\]elbe$/i.test(text)) {
 		sendElbePegel(muc);
     } else if ((m = text.match(/^s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
