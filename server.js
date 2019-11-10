@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 const XMPPClient = require('./xmpp_client');
 const { matematSummary, matematBuy } = require('./matemat');
 
-const SPACEAPI_URL = "http://www.hq.c3d2.de:3000/spaceapi.json";
+const SPACEAPI_URL = "http://spaceapi.hq.c3d2.de:3000/spaceapi.json";
 
 const TEST_URL_REGEX = /([-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?)/gi;
 
