@@ -9,15 +9,15 @@ with lib;
       description = "Enable the bot";
     };
     jid = mkOption {
-      type = types.string;
+      type = types.str;
       description = "Jabber-ID";
     };
     password = mkOption {
-      type = types.string;
+      type = types.str;
       description = "Jabber password";
     };
     mucs = mkOption {
-      type = types.listOf types.string;
+      type = types.listOf types.str;
       description = "MUC Jabber-IDs";
     };
   };
