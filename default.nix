@@ -25,6 +25,7 @@ stdenv.mkDerivation {
     #!/usr/bin/env bash
     set -e
 
+    export PATH=${pkgs.nix}/bin
     cd ${package}/lib/node_modules/tigger
     ${nodejs}/bin/node server.js \$@
     EOF
