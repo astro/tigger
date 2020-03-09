@@ -14,16 +14,18 @@ process.on('SIGTERM', function() {
     process.exit(0);
 });
 
-if (process.argv.length != 5) {
-    console.error("Parameters: <my-jid> <my-password> <full-muc-jid>");
+if (process.argv.length < 5) {
+    console.error("Parameters: <my-jid> <my-password> <full-muc-jid1> [<full-muc-jid2> .. <full-muc-jidN>]");
     process.exit(1);
 }
 const jid = process.argv[2],
       pass = process.argv[3],
-      muc_jid = process.argv[4];
+      muc_jids = process.argv.slice(4);
 
 const cl = new XMPPClient(jid, pass);
-cl.joinRoom(muc_jid);
+for(const muc_jid of muc_jids) {
+    cl.joinRoom(muc_jid);
+}
 
 
 function spaceAPI() {

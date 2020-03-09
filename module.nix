@@ -16,9 +16,9 @@ with lib;
       type = types.string;
       description = "Jabber password";
     };
-    muc = mkOption {
-      type = types.string;
-      description = "MUC Jabber-ID";
+    mucs = mkOption {
+      type = types.listOf types.string;
+      description = "MUC Jabber-IDs";
     };
   };
 
@@ -35,7 +35,7 @@ with lib;
           Type = "simple";
           ExecStart = ''
             ${tigger}/bin/tigger \
-              ${with cfg; escapeShellArgs [jid password muc]}
+              ${with cfg; escapeShellArgs ([jid password] ++ mucs)}
           '';
           Restart = "always";
           RestartSec = "10min";
