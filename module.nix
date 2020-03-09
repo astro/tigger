@@ -8,6 +8,12 @@ with lib;
       default = true;
       description = "Enable the bot";
     };
+    user = mkOption {
+      type = types.str;
+    };
+    group = mkOption {
+      type = types.str;
+    };
     jid = mkOption {
       type = types.str;
       description = "Jabber-ID";
@@ -40,13 +46,15 @@ with lib;
           Restart = "always";
           RestartSec = "10min";
 
-          DynamicUser = true;
+          User = cfg.user;
+          Group = cfg.group;
           NoNewPrivileges = true;
           LimitNPROC = 16;
           LimitNOFILE = 1024;
           CPUWeight = 5;
           MemoryMax = "512M";
           ProtectSystem = "full";
+          ProtectHome = "tmpfs";
        };
      };
   };
