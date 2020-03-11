@@ -210,7 +210,7 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
-    } else if (m = text.match(/^>(.*)/)) {
+    } else if (m = text.match(/^[\+\?\!\/\\]nix (.*)/)) {
         evalNix(muc, m[1]);
     } else if (m = text.match(TEST_URL_REGEX)) {
         fetchPageTitle(muc, m[0]);
