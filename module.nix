@@ -49,7 +49,7 @@ with lib;
           User = cfg.user;
           Group = cfg.group;
           NoNewPrivileges = true;
-          LimitNPROC = 16;
+          LimitNPROC = 32;
           LimitNOFILE = 1024;
           CPUWeight = 5;
           MemoryMax = "512M";
