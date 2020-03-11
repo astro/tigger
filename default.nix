@@ -25,7 +25,7 @@ stdenv.mkDerivation {
     #!/usr/bin/env bash
     set -e
 
-    export PATH=${pkgs.nix}/bin
+    export PATH=${pkgs.lib.makeBinPath (with pkgs; [nix gzip gnutar])}
     cd ${package}/lib/node_modules/tigger
     ${nodejs}/bin/node server.js \$@
     EOF
