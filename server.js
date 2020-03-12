@@ -152,7 +152,10 @@ function fetchSchleuder(muc, nick){
 			const $ = cheerio.load(html);
 			const actual = $("body div[id=schleudern]").children().first();
 			let num = parseInt(actual.text().match(/[0-9]+/));
-			const url = baseUrl + actual.find("a").attr("href");
+			let url = actual.find("a").attr("href");
+			if (!/^http.*/.test(url)) {
+				url = baseUrl + url;
+			}
 			cl.sendRoomMessage(muc, `${nick}: Schleuder Nummer ${num} ist unter ${url} zu finden, somit sollte Nummer ${++num} im Druck sein`);
 		});
 }	
