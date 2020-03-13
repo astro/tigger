@@ -144,9 +144,11 @@ function sendCovidStats(muc) {
                 });
             });
 
-            let lines = tables
-                .filter(record => CK_C_FILTER(record[CK_L]))
-                .map(record => `${record[CK_L]}: ${record[CK_C]} Fälle`);
+            let lines = [date].concat(
+                tables
+                    .filter(record => CK_C_FILTER(record[CK_L]))
+                    .map(record => `${record[CK_L]}: ${record[CK_C]} Fälle`)
+            );
             cl.sendRoomMessage(muc, lines.join("\n"));
         });
 }
