@@ -279,3 +279,7 @@ cl.on('muc:message', (muc, nick, text) => {
         }
     }
 });
+
+cl.on('end', function() {
+    process.exit(1);
+});
