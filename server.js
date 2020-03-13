@@ -257,7 +257,7 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
-    } else if (/^[\+\?\!\/\\]covid/) {
+    } else if (/^[\+\?\!\/\\]covid/.test(text)) {
         sendCovidStats(muc);
     } else if (m = text.match(/^[\+\?\!\/\\]nix (.*)/)) {
         evalNix(muc, m[1]);
