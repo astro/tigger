@@ -27,6 +27,10 @@ for(const muc_jid of muc_jids) {
     cl.joinRoom(muc_jid);
 }
 
+const trimString = s => s
+      .replace(/\s+/g, " ")
+      .replace(/^\s+/, "")
+      .replace(/\s+$/, "");
 
 function spaceAPI() {
     return fetch(SPACEAPI_URL)
@@ -104,7 +108,49 @@ function sendBitcoinPrice(muc) {
                 cl.sendRoomMessage(muc, `BTC: ${kollemate} Flaschen Kolle-Mate (${euro.toFixed(2)}€)`);
             });
         });
-} 
+}
+
+const CK_L = 'Kreisfreie Stadt / Landkreis';
+const CK_C = 'Vorabmeldung bestätigter Fälle*';
+const CK_C_FILTER = l =>
+      !!l &&
+      ["Dresden", "Gesamtzahl"].some(s => l.indexOf(s) != -1);
+function sendCovidStats(muc) {
+    fetch("https://www.sms.sachsen.de/coronavirus.html")
+        .then(res => res.text())
+        .then(body => {
+            const $ = cheerio.load(body);
+            let date = ""
+            $('p').each((i, p) => {
+                let t = $(p).text();
+                let m;
+                if ((m = t.match(/Stand: (.*)/))) {
+                    date = ` (${trimString(m[1])})`;
+                }
+            });
+            let tables = [];
+            $('table').each((i, table) => {
+                let keys = [];
+                $(table).find('th').each((i, th) => {
+                    keys.push(trimString($(th).text()));
+                });
+                $(table).find('tr').each((i, tr) => {
+                    let record = {};
+                    $(tr).find('td').each((i, td) => {
+                        record[keys[i]] = trimString($(td).text());
+                        i += 1;
+                    });
+                    tables.push(record);
+                });
+            });
+
+            let lines = tables
+                .filter(record => CK_C_FILTER(record[CK_L]))
+                .map(record => `${record[CK_L]}: ${record[CK_C]} Fälle`);
+            cl.sendRoomMessage(muc, lines.join("\n"));
+        });
+}
+return sendCovidStats();
 
 function evalNix(muc, expr) {
     const nix = spawn('nix', [
@@ -210,6 +256,8 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
+    } else if (/^[\+\?\!\/\\]covid/) {
+        sendCovidStats(muc);
     } else if (m = text.match(/^[\+\?\!\/\\]nix (.*)/)) {
         evalNix(muc, m[1]);
     } else if (m = text.match(TEST_URL_REGEX)) {
