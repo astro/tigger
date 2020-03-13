@@ -150,7 +150,6 @@ function sendCovidStats(muc) {
             cl.sendRoomMessage(muc, lines.join("\n"));
         });
 }
-return sendCovidStats();
 
 function evalNix(muc, expr) {
     const nix = spawn('nix', [
