@@ -110,8 +110,8 @@ function sendBitcoinPrice(muc) {
         });
 }
 
-const CK_L = 'Kreisfreie Stadt / Landkreis';
-const CK_C = 'Vorabmeldung bestätigter Fälle*';
+const CK_L = /kreis/;
+const CK_C = /bestätigte.]F.+ll/;
 const CK_C_FILTER = l =>
       !!l &&
       ["Dresden", "Gesamtzahl"].some(s => l.indexOf(s) != -1);
@@ -130,10 +130,7 @@ function sendCovidStats(muc) {
             });
             let tables = [];
             $('table').each((i, table) => {
-                let keys = [];
-                $(table).find('th').each((i, th) => {
-                    keys.push(trimString($(th).text()));
-                });
+                let keys = ['l', 'c', 'cs'];
                 $(table).find('tr').each((i, tr) => {
                     let record = {};
                     $(tr).find('td').each((i, td) => {
@@ -146,8 +143,8 @@ function sendCovidStats(muc) {
 
             let lines = [date].concat(
                 tables
-                    .filter(record => CK_C_FILTER(record[CK_L]))
-                    .map(record => `${record[CK_L]}: ${record[CK_C]} Fälle`)
+                    .filter(record => CK_C_FILTER(record.l))
+                    .map(record => `${record.l}: ${record.c} Fälle`)
             );
             cl.sendRoomMessage(muc, lines.join("\n"));
         });
