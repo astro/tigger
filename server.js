@@ -125,7 +125,7 @@ function sendCovidStats(muc) {
                 let t = $(p).text();
                 let m;
                 if ((m = t.match(/Stand: (.*)/))) {
-                    date = ` (${trimString(m[1])})`;
+                    date = `Quelle: Sozialministerium Sachsen <https://www.sms.sachsen.de/coronavirus.html> (${trimString(m[1])})`;
                 }
             });
             let tables = [];
