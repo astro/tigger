@@ -108,19 +108,24 @@ module.exports = class XMPPClient extends EventEmitter {
         }
     }
 
-    sendRoomMessage(jid, text) {
+    sendRoomMessage(jid, text, extraChildren) {
         jid = new XMPP.JID(jid);
         const mucJid = jid.bare().toString();
 
-        this.client.send(
-            new XMPP.Element('message', {
-                to: mucJid,
-                type: 'groupchat',
-            })
-                .c('body')
-                .t(text)
-                .root()
-        );
+        let stanza = new XMPP.Element('message', {
+            to: mucJid,
+            type: 'groupchat',
+        })
+            .c('body')
+            .t(text)
+            .root();
+        if (extraChildren) {
+            for(const child of extraChildren) {
+                stanza.cnode(child);
+            }
+        }
+
+        this.client.send(stanza);
         console.log(`[${mucJid}] >> ${text}`);
     }
 }

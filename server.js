@@ -2,8 +2,10 @@ const cheerio = require('cheerio');
 const Crypto = require('crypto');
 const fs = require('fs');
 const fetch = require('node-fetch');
+const { Element } = require('node-xmpp-client');
 const XMPPClient = require('./xmpp_client');
 const { spawn } = require('child_process');
+const url = require('url');
 const { matematSummary, matematBuy } = require('./matemat');
 
 const SPACEAPI_URL = "http://spaceapi.hq.c3d2.de:3000/spaceapi.json";
@@ -110,26 +112,34 @@ function sendBitcoinPrice(muc) {
         });
 }
 
+const COVID_URL = "https://www.coronavirus.sachsen.de/infektionsfaelle-in-sachsen-4151.html";
 const CK_L = /kreis/;
 const CK_C = /bestätigte.]F.+ll/;
 const CK_C_FILTER = l =>
       !!l &&
       ["Dresden", "Gesamtzahl"].some(s => l.indexOf(s) != -1);
 function sendCovidStats(muc) {
-    fetch("https://www.sms.sachsen.de/coronavirus.html")
+    fetch(COVID_URL)
         .then(res => res.text())
         .then(body => {
             const $ = cheerio.load(body);
-            let date = ""
-            $('p').each((i, p) => {
+
+            let img_set = $('.content figure img.media-object').attr('data-srcset');
+            let img, m;
+            if (img_set && ((m = img_set.match(/[, ]([^ ,]+) 780w/)))) {
+                img = url.resolve(COVID_URL, m[1]);
+            }
+
+            let date = "";
+            $('.content p').each((i, p) => {
                 let t = $(p).text();
                 let m;
                 if ((m = t.match(/Stand: (.*)/))) {
-                    date = `Quelle: Sozialministerium Sachsen <https://www.sms.sachsen.de/coronavirus.html> (${trimString(m[1])})`;
+                    date = `Quelle: Sozialministerium Sachsen (${trimString(m[1])})`;
                 }
             });
             let tables = [];
-            $('table').each((i, table) => {
+            $('.content table').each((i, table) => {
                 let keys = ['l', 'c', 'cs'];
                 $(table).find('tr').each((i, tr) => {
                     let record = {};
@@ -146,7 +156,14 @@ function sendCovidStats(muc) {
                     .filter(record => CK_C_FILTER(record.l))
                     .map(record => `${record.l}: ${record.c} Fälle`)
             );
-            cl.sendRoomMessage(muc, lines.join("\n"));
+            let oob;
+            if (img) {
+                oob = new Element('x', { xmlns: 'jabber:x:oob' })
+                    .c('url')
+                    .t(img)
+                    .root();
+            }
+            cl.sendRoomMessage(muc, lines.join("\n"), oob ? [oob] : null);
         });
 }
 
