@@ -115,10 +115,12 @@ module.exports = class XMPPClient extends EventEmitter {
         let stanza = new XMPP.Element('message', {
             to: mucJid,
             type: 'groupchat',
-        })
-            .c('body')
-            .t(text)
-            .root();
+        });
+        if (text) {
+            stanza
+                .c('body')
+                .t(text);
+        }
         if (extraChildren) {
             for(const child of extraChildren) {
                 stanza.cnode(child);

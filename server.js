@@ -163,7 +163,10 @@ function sendCovidStats(muc) {
                     .t(img)
                     .root();
             }
-            cl.sendRoomMessage(muc, lines.join("\n"), oob ? [oob] : null);
+            cl.sendRoomMessage(muc, lines.join("\n"));
+            if (oob) {
+                cl.sendRoomMessage(muc, null, [oob]);
+            }
         });
 }
 
