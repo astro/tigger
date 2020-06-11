@@ -284,6 +284,8 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, `${nick}: Bitte habe etwas Geduld, es gibt ja nicht unendlich viele Voucher!`)
     } else if ((/voucher/i.test(text) || /gutschein/i.test(text) || /token/i.test(text)) && (/[ck]ongress/i.test(text) || /35c3/i.test(text))) {
         cl.sendRoomMessage(muc, `${nick}: Bitte sieh doch im Wiki nach und koordiniere dein Anliegen dort!\nhttps://wiki.c3d2.de/35C3#Erfa-Voucher`);
+    } else if (/mitglied/i.test(text) || /membership/i.test(text) || ((/ccc/i.test(text) || /c3d2/i.test(text)) && /beitreten/i.test(text))) {
+        cl.sendRoomMessage(muc, `${nick}: Du kannst gerne den CCC Dresden unterstützen <https://c3d2.de/unterstuetzen.html>, oder Mitglied im lokalen Verein <https://c3d2.de/membership.html> bzw. im CCC eV <https://www.ccc.de/de/membership> werden.`);
     } else if (/datenschleuder/i.test(text) || /schleuder/i.test(text)) {
 	fetchSchleuder(muc, nick);
     } else if (/^[\+\?\!\/\\]elbe$/i.test(text)) {
