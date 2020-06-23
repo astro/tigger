@@ -209,14 +209,15 @@ function sendElbePegel(muc) {
 }
 
 function fetchSchleuder(muc, nick){
-	const baseUrl = "http://ds.ccc.de";
+	const baseUrl = "https://ds.ccc.de";
 	fetch(baseUrl + "/download.html")
 		.then(res => res.text())
 		.then(html => {
 			const $ = cheerio.load(html);
 			const actual = $("body div[id=schleudern]").children().first();
 			let num = parseInt(actual.text().match(/[0-9]+/));
-			const url = baseUrl + actual.find("a").attr("href");
+			let url = actual.find("a").attr("href");
+			if ( ! /:\/\//i.test(url) ) { url = + url; }
 			cl.sendRoomMessage(muc, `${nick}: Schleuder Nummer ${num} ist unter ${url} zu finden, somit sollte Nummer ${++num} im Druck sein`);
 		});
 }	
