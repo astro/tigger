@@ -217,7 +217,7 @@ function fetchSchleuder(muc, nick){
 			const actual = $("body div[id=schleudern]").children().first();
 			let num = parseInt(actual.text().match(/[0-9]+/));
 			let url = actual.find("a").attr("href");
-			if ( ! /:\/\//i.test(url) ) { url = + url; }
+			if ( ! /:\/\//i.test(url) ) { url = baseUrl + url; }
 			cl.sendRoomMessage(muc, `${nick}: Schleuder Nummer ${num} ist unter ${url} zu finden, somit sollte Nummer ${++num} im Druck sein`);
 		});
 }	
