@@ -7,6 +7,7 @@ const XMPPClient = require('./xmpp_client');
 const { spawn } = require('child_process');
 const url = require('url');
 const { matematSummary, matematBuy } = require('./matemat');
+const getCovid = require('./covid.js')
 
 const SPACEAPI_URL = "http://spaceapi.hq.c3d2.de:3000/spaceapi.json";
 
@@ -112,61 +113,10 @@ function sendBitcoinPrice(muc) {
         });
 }
 
-const COVID_URL = "https://www.coronavirus.sachsen.de/infektionsfaelle-in-sachsen-4151.html";
-const CK_L = /kreis/;
-const CK_C = /bestätigte.]F.+ll/;
-const CK_C_FILTER = l =>
-      !!l &&
-      ["Dresden", "Gesamtzahl"].some(s => l.indexOf(s) != -1);
-function sendCovidStats(muc) {
-    fetch(COVID_URL)
-        .then(res => res.text())
-        .then(body => {
-            const $ = cheerio.load(body);
-
-            let img_set = $('.content figure img.media-object').attr('data-srcset');
-            let img, m;
-            if (img_set && ((m = img_set.match(/[, ]([^ ,]+) 780w/)))) {
-                img = url.resolve(COVID_URL, m[1]);
-            }
-
-            let date = "";
-            $('.content p').each((i, p) => {
-                let t = $(p).text();
-                let m;
-                if ((m = t.match(/Stand: (.*)/))) {
-                    date = `Quelle: Sozialministerium Sachsen (${trimString(m[1])})`;
-                }
-            });
-            let tables = [];
-            $('.content table').each((i, table) => {
-                let keys = ['l', 'c', 'cs'];
-                $(table).find('tr').each((i, tr) => {
-                    let record = {};
-                    $(tr).find('td').each((i, td) => {
-                        record[keys[i]] = trimString($(td).text());
-                        i += 1;
-                    });
-                    tables.push(record);
-                });
-            });
-
-            let lines = [date].concat(
-                tables
-                    .filter(record => CK_C_FILTER(record.l))
-                    .map(record => `${record.l}: ${record.c} Fälle`)
-            );
-            let oob;
-            if (img) {
-                oob = new Element('x', { xmlns: 'jabber:x:oob' })
-                    .c('url')
-                    .t(img)
-                    .root();
-            }
-            cl.sendRoomMessage(muc, lines.join("\n"));
-            if (oob) {
-                cl.sendRoomMessage(muc, null, [oob]);
-            }
+function sendCovidStats(location, muc) {
+    getCovid(location)
+        .then(stats => {
+            cl.sendRoomMessage(muc, `7-Tage-Inzidenz ${stats.name}: ${stats.y}`);
         });
 }
 
@@ -275,8 +225,10 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, 'I am famous!');
     } else if (/^[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
+    } else if ((m = text.match(/^[\+\?\!\/\\]covid (.+)/))) {
+        sendCovidStats(m[1], muc);
     } else if (/^[\+\?\!\/\\]covid/.test(text)) {
-        sendCovidStats(muc);
+        sendCovidStats(null, muc);
     } else if (m = text.match(/^[\+\?\!\/\\]nix (.*)/)) {
         evalNix(muc, m[1]);
     } else if (m = text.match(TEST_URL_REGEX)) {
