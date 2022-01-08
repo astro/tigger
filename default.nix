@@ -2,9 +2,9 @@
 with pkgs;
 
 let
-  nodejs = nodejs-10_x;
+  nodejs = nodejs-12_x;
   nodeEnv = import ./node-env.nix {
-    inherit (pkgs) stdenv python2 utillinux runCommand writeTextFile;
+    inherit (pkgs) stdenv lib python2 utillinux runCommand writeTextFile;
     inherit nodejs;
     libtool = if pkgs.stdenv.isDarwin then pkgs.darwin.cctools else null;
   };
