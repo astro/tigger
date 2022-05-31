@@ -2,7 +2,7 @@
 with pkgs;
 
 let
-  nodejs = nodejs-12_x;
+  nodejs = nodejs-16_x;
   nodeEnv = import ./node-env.nix {
     inherit (pkgs) stdenv lib python2 utillinux runCommand writeTextFile;
     inherit nodejs;
