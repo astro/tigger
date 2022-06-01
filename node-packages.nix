@@ -673,11 +673,11 @@ let
     "reconnect-core-https://github.com/dodo/reconnect-core/tarball/merged" = {
       name = "reconnect-core";
       packageName = "reconnect-core";
-      version = "0.0.1";
+      version = 1;
       src = fetchurl {
-        name = "reconnect-core-0.0.1.tar.gz";
-        url = "https://codeload.github.com/dodo/reconnect-core/legacy.tar.gz/refs/heads/merged";
-        sha256 = "431dd7a1578061815270e4ad59c6e8b40dff6b308244973e1c11049ccbf1629b";
+        name = "reconnect-core-1.tar.gz";
+        url = "https://github.com/dodo/reconnect-core/tarball/merged";
+        sha512 = "wZK/v5ZaNaSUs2Wnwh2YSX/Jqv6bQHKNEwojdzV11tByKziR9ikOssf5tvUhx+8/oCBz6AakOFAjZuqPoiRHJQ==";
       };
     };
     "request-2.88.2" = {
@@ -920,7 +920,7 @@ let
     };
     production = true;
     bypassCache = true;
-    reconstructLock = true;
+    reconstructLock = false;
   };
 in
 {
