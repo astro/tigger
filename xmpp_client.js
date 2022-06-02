@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import * as NodeXMPPClient from 'node-xmpp-client';
+import { default as XMPP } from 'node-xmpp-client';
 
 const NS_MUC = 'http://jabber.org/protocol/muc';
 const NS_DELAY = 'urn:xmpp:delay';

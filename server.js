@@ -2,14 +2,13 @@ import * as cheerio from 'cheerio';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
 import * as fetch from 'node-fetch';
-import * as NodeXMPPClient from 'node-xmpp-client';
-const { Element } = NodeXMPPClient;
-import * as XMPPClient from './xmpp_client.js';
+import * as XMPP from 'node-xmpp-client';
+const { Element } = XMPP;
+import { XMPPClient } from './xmpp_client.js';
 import { spawn } from 'child_process';
 import * as url from 'url';
-import * as Matemat from './matemat.js';
-const { matematSummary, matematBuy } = Matemat;
-import * as getCovid from './covid.js'
+import { matematSummary, matematBuy } from './matemat.js';
+import { getCovid } from './covid.js'
 
 const SPACEAPI_URL = "http://spaceapi.hq.c3d2.de:3000/spaceapi.json";
 
