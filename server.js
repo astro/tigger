@@ -131,9 +131,7 @@ function evalNix(muc, expr) {
         '--option', 'max-jobs', '0',
         '--option', 'allow-import-from-derivation', 'false',
         '--option', 'allowed-uris', '',
-        // explicitly specify <nixpkgs> input for restrict-eval
-        '-I', 'nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz',
-        `(with import <nixpkgs> {}; ${expr})`
+        'nixpkgs#legacyPackages.x86_64-linux', '--apply', `p: with p; ${expr}`
     ]);
     nix.stdout.on('data', (data) => {
       cl.sendRoomMessage(muc, `${data}`);
