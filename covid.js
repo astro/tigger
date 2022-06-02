@@ -1,11 +1,11 @@
 /* Virus code */
 
-const fetch = require('node-fetch');
-const leven = require('leven');
+import * as fetch from 'node-fetch';
+import * as leven from 'leven';
 
 const COVID_URL = "https://www.coronavirus.sachsen.de/corona-statistics/rest/incidence.jsp";
 
-module.exports = async function getCovid(wantedLocation) {
+export async function getCovid(wantedLocation) {
     const location = (wantedLocation || "Dresden").toLocaleLowerCase();
 
     return fetch(COVID_URL)

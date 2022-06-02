@@ -1,15 +1,10 @@
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
-const leven = require('leven');
+import * as fetch from 'node-fetch';
+import * as cheerio from 'cheerio';
+import * as leven from 'leven';
 
 const MATEMAT_URL = "http://matemat.hq.c3d2.de";
 
-module.exports = {
-    matematSummary,
-    matematBuy,
-};
-
-function matematSummary() {
+export function matematSummary() {
     return fetch(`${MATEMAT_URL}/summary.json`)
         .then(res => res.json());
 }
@@ -55,7 +50,7 @@ function agent(url, fetchOpts) {
 
 const ITEM_IGNORE = /[\s\.,\-\!]/g;
 
-function matematBuy(user, item, amount) {
+export function matematBuy(user, item, amount) {
     const userLower = user.toLocaleLowerCase();
     const itemMangled = item.toLocaleLowerCase()
           .replace(ITEM_IGNORE, "");

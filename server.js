@@ -1,13 +1,15 @@
-const cheerio = require('cheerio');
-const Crypto = require('crypto');
-const fs = require('fs');
-const fetch = require('node-fetch');
-const { Element } = require('node-xmpp-client');
-const XMPPClient = require('./xmpp_client');
-const { spawn } = require('child_process');
-const url = require('url');
-const { matematSummary, matematBuy } = require('./matemat');
-const getCovid = require('./covid.js')
+import * as cheerio from 'cheerio';
+import * as Crypto from 'crypto';
+import * as fs from 'fs';
+import * as fetch from 'node-fetch';
+import * as NodeXMPPClient from 'node-xmpp-client';
+const { Element } = NodeXMPPClient;
+import * as XMPPClient from './xmpp_client.js';
+import { spawn } from 'child_process';
+import * as url from 'url';
+import * as Matemat from './matemat.js';
+const { matematSummary, matematBuy } = Matemat;
+import * as getCovid from './covid.js'
 
 const SPACEAPI_URL = "http://spaceapi.hq.c3d2.de:3000/spaceapi.json";
 

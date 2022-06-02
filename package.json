@@ -1,16 +1,17 @@
 {
   "name": "tigger",
+  "type": "module",
   "description": "A XMPP MUC bot",
   "version": "0.0.2",
   "license": "AGPL",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/astro/tigger"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/astro/tigger"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
-    "leven": "^2.1.0",
-    "node-fetch": "^1.6.3",
+    "cheerio": "^1.0.0-rc.11",
+    "leven": "^4.0.0",
+    "node-fetch": "^3.2.5",
     "node-xmpp-client": "^3.2.0"
   }
 }
