@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 import * as XMPP from 'node-xmpp-client';
 const { Element } = XMPP;
 import { XMPPClient } from './xmpp_client.js';

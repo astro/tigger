@@ -1,6 +1,6 @@
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 import * as cheerio from 'cheerio';
-import * as leven from 'leven';
+import leven from 'leven';
 
 const MATEMAT_URL = "http://matemat.hq.c3d2.de";
 

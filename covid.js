@@ -1,7 +1,7 @@
 /* Virus code */
 
-import * as fetch from 'node-fetch';
-import * as leven from 'leven';
+import fetch from 'node-fetch';
+import leven from 'leven';
 
 const COVID_URL = "https://www.coronavirus.sachsen.de/corona-statistics/rest/incidence.jsp";
 
