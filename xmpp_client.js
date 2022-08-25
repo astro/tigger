@@ -1,9 +1,11 @@
 import { EventEmitter } from 'events';
 import { default as XMPP } from 'node-xmpp-client';
+import { default as crypto } from 'crypto';
 
 const NS_MUC = 'http://jabber.org/protocol/muc';
 const NS_DELAY = 'urn:xmpp:delay';
 const NS_X_DELAY = 'jabber:x:delay';
+const NS_PING = 'urn:xmpp:ping';
 
 export class XMPPClient extends EventEmitter {
     constructor(jid, pass) {
@@ -14,6 +16,7 @@ export class XMPPClient extends EventEmitter {
         this.online = false;
         this.presence = {};
         this.rooms = {};
+        this.pingIDs = {};
         this._setup();
     }
 
@@ -25,6 +28,7 @@ export class XMPPClient extends EventEmitter {
 	});
         // Keep-alive:
         setInterval(() => this.client.send(" "), 60000);
+        setInterval(() => this.pingRooms(), 600000)
         this.client.on('online', () => {
             this.online = true;
             this.sendPresence();
@@ -67,6 +71,15 @@ export class XMPPClient extends EventEmitter {
                     console.log(`[????] <${fromNick}> ${body || ""}`);
                 }
             }
+            if (stanza.is('iq')){
+                if (Object.keys(this.pingIDs).includes(stanza.attrs.id)){
+                    if (stanza.attrs.type == 'error' && stanza.getChild('error')) {
+                        mucJid = XMPP.JID(stanza.attrs.from.toString());
+                        this.joinRoom(mucJid.bare.toString())
+                    }
+                    delete this.pingIDs[stanza.attrs.id]
+                }
+            }
         });
     }
 
@@ -106,6 +119,24 @@ export class XMPPClient extends EventEmitter {
             presence.c('x', { xmlns: NS_MUC });
             this.client.send(presence);
         }
+    }
+
+    sendPing(jid) {
+        jid = new XMPP.JID(jid);
+        const id = crypto.randomUUID();
+        const iq = new XMPP.Stanza('iq', {
+            type: 'get',
+            to: jid.toString(),
+            id: id
+        }).c('ping', { xmlns: NS_PING });
+        this.pingIDs[id] = jid.toString();
+        this.client.send(iq);
+    }
+
+    pingRooms() {
+        Object.entries(this.rooms).forEach(([mucJid, values]) => {
+            this.sendPing(`${mucJid}/${values.nick}`)
+        });
     }
 
     sendRoomMessage(jid, text, extraChildren) {
