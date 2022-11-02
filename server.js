@@ -92,13 +92,13 @@ function fetchPageTitle(muc, url) {
     });
 }
 
-const DEFAULT_MATE_PRICE = 1.00;
+const DEFAULT_MATE_PRICE = 1.50;
 
 function sendBitcoinPrice(muc) {
     let price = fetch("http://matemat.hq.c3d2.de/summary.json")
         .then(res => res.json())
         .then(json => {
-            let kolleMate = json.filter(value => value.name == "kolle-mate")[0];
+            let kolleMate = json.filter(value => value.name == "Kolle Mate")[0];
             let price = kolleMate && kolleMate.price || DEFAULT_MATE_PRICE;
             return price;
         }).catch(() => DEFAULT_MATE_PRICE);
