@@ -167,7 +167,7 @@ function fetchSchleuder(muc, nick){
 			let num = parseInt(actual.text().match(/[0-9]+/));
 			let url = actual.find("a").attr("href");
 			if ( ! /:\/\//i.test(url) ) { url = baseUrl + url; }
-			cl.sendRoomMessage(muc, `${nick}: Schleuder Nummer ${num} ist unter ${url} zu finden, somit sollte min. Nummer ${++num} im Druck sein, evtl. liegt sie bereits im HQ.`);
+			cl.sendRoomMessage(muc, `${nick}: Schleuder Nummer ${num} ist unter ${url} zu finden und daher min. als Print verfügbar. Somit ist Nummer ${++num} bereits in Arbeit, schreibt Artikel damit sie schneller fertig wird!`);
 		});
 }	
 
