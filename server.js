@@ -174,7 +174,7 @@ function fetchSchleuder(muc, nick){
 cl.on('muc:message', (muc, nick, text) => {
     var m;
 
-    if (/[^`]+[\+\?\!\/\\]hq status$/i.test(text)) {
+    if (/[^`]?[\+\?\!\/\\]hq status$/i.test(text)) {
         spaceAPI().then(json => {
             if (json.state &&
                 json.state.hasOwnProperty('open') &&
@@ -184,12 +184,12 @@ cl.on('muc:message', (muc, nick, text) => {
                 cl.sendRoomMessage(muc, `${nick}: [${open ? "OPEN" : "CLOSED"}] ${json.state.message}`);
             }
         });
-    } else if (/[^`]+[\+\?\!\/\\]hq sensors$/i.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\]hq sensors$/i.test(text)) {
         spaceAPI().then(json => {
             const categories = Object.keys(json.sensors || {});
             cl.sendRoomMessage(muc, `${nick}: +hq sensors <${categories.join(" | ")}>`);
         });
-    } else if ((m = text.match(/[^`]+[\+\?\!\/\\]hq sensors (.+)$/))) {
+    } else if ((m = text.match(/[^`]?[\+\?\!\/\\]hq sensors (.+)$/))) {
         const category = m[1];
         spaceAPI().then(json => {
             const readings = json.sensors[category];
@@ -208,7 +208,7 @@ cl.on('muc:message', (muc, nick, text) => {
         });
     } else if (/^hello/i.test(text) || /^hi$/i.test(text) || /^hallo/i.test(text)) {
         cl.sendRoomMessage(muc, `${nick}: Hi!`);
-    } else if (/[^`]+[\+\?\!\/\\]hq mate$/i.test(text) || /[^`]+was gibt es\?$/i.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\]hq mate$/i.test(text) || /[^`]?was gibt es\?$/i.test(text)) {
         matematSummary().then(summary => {
             const lines = summary
                   .filter(({ value }) => value > 0)
@@ -216,19 +216,19 @@ cl.on('muc:message', (muc, nick, text) => {
                   .join("\n");;
             cl.sendRoomMessage(muc, `Wir haben:\n${lines}`);
         });
-    } else if ((m = text.match(/[^`]+[\+\?\!\/\\]hq mate (\d+) (.+)$/i)) || (m = text.match(/^ich kaufe (\d+) (.+)$/i))) {
+    } else if ((m = text.match(/[^`]?[\+\?\!\/\\]hq mate (\d+) (.+)$/i)) || (m = text.match(/^ich kaufe (\d+) (.+)$/i))) {
         buyMate(muc, nick, m[2], parseInt(m[1]));
-    } else if ((m = text.match(/[^`]+[\+\?\!\/\\]hq mate (.+)$/i)) || (m = text.match(/^ich kaufe eine? (.+)$/i))) {
+    } else if ((m = text.match(/[^`]?[\+\?\!\/\\]hq mate (.+)$/i)) || (m = text.match(/^ich kaufe eine? (.+)$/i))) {
         buyMate(muc, nick, m[1], 1);
     } else if (text.toLowerCase().indexOf(cl.rooms[muc].nick) !== -1) {
         cl.sendRoomMessage(muc, 'I am famous!');
-    } else if (/[^`]+[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\](bitcoin|btc)$/i.test(text)) {
         sendBitcoinPrice(muc);
-    } else if ((m = text.match(/[^`]+[\+\?\!\/\\]covid (.+)/))) {
+    } else if ((m = text.match(/[^`]?[\+\?\!\/\\]covid (.+)/))) {
         sendCovidStats(m[1], muc);
-    } else if (/[^`]+[\+\?\!\/\\]covid/.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\]covid/.test(text)) {
         sendCovidStats(null, muc);
-    } else if (m = text.match(/[^`]+[\+\?\!\/\\]nix (.*)/)) {
+    } else if (m = text.match(/[^`]?[\+\?\!\/\\]nix (.*)/)) {
         evalNix(muc, m[1]);
     } else if (m = text.match(TEST_URL_REGEX)) {
         fetchPageTitle(muc, m[0]);
@@ -240,9 +240,9 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, `${nick}: Du kannst gerne den CCC Dresden unterstützen <https://c3d2.de/unterstuetzen.html>, oder Mitglied im lokalen Verein <https://c3d2.de/membership.html> bzw. im CCC eV <https://www.ccc.de/de/membership> werden.`);
     } else if (/datenschleuder/i.test(text) || /schleuder/i.test(text)) {
 	fetchSchleuder(muc, nick);
-    } else if (/[^`]+[\+\?\!\/\\]elbe$/i.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\]elbe$/i.test(text)) {
 		sendElbePegel(muc);
-    } else if ((m = text.match(/[^`]+s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
+    } else if ((m = text.match(/[^`]?s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
         try {
             var regexp = new RegExp(m[1], m[3]);
             correctMessage(muc, nick, regexp, m[2]);
