@@ -240,7 +240,7 @@ cl.on('muc:message', (muc, nick, text) => {
         cl.sendRoomMessage(muc, `${nick}: Du kannst gerne den CCC Dresden unterstützen <https://c3d2.de/unterstuetzen.html>, oder Mitglied im lokalen Verein <https://c3d2.de/membership.html> bzw. im CCC eV <https://www.ccc.de/de/membership> werden.`);
     } else if (/datenschleuder/i.test(text) || /schleuder/i.test(text)) {
 	fetchSchleuder(muc, nick);
-    } else if (/[^`]?[\+\?\!\/\\]elbe$/i.test(text)) {
+    } else if (/[^`]?[\+\?\!\/\\]elbe$/i.test(text) || /[^`]?[\+\?\!\/\\]labe$/i.test(text) || /[^`]?[\+\?\!\/\\]laba$/i.test(text) || /[^`]?[\+\?\!\/\\]łaba$/i.test(text) || /[^`]?[\+\?\!\/\\]albis$/i.test(text)) {
 		sendElbePegel(muc);
     } else if ((m = text.match(/[^`]?s\/([^/]*)\/([^/]*)\/(\w*)$/))) {
         try {
