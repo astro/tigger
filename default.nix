@@ -37,4 +37,6 @@ stdenv.mkDerivation {
     EOF
     chmod a+x $out/bin/tigger
   '';
+
+  meta.mainProgram = "tigger";
 }

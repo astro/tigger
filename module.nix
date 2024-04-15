@@ -19,8 +19,14 @@ with lib;
       description = "Jabber-ID";
     };
     password = mkOption {
-      type = types.str;
+      type = types.nullOr types.str;
+      default = null;
       description = "Jabber password";
+    };
+    passwordFile = mkOption {
+      type = types.str;
+      default = null;
+      description = "Jabber password in a file";
     };
     mucs = mkOption {
       type = types.listOf types.str;
@@ -37,12 +43,14 @@ with lib;
         description = "MUC bot";
         wantedBy = [ "multi-user.target" ];
         after    = [ "network.target" ];
+        script = ''
+          ${lib.getExe tigger} ${with cfg; concatStringsSep " " ([jid]
+            ++ lib.optional (password != null) password
+            ++ lib.optional (passwordFile != null) "$(cat ${passwordFile})"
+            ++ mucs)}
+        '';
         serviceConfig = {
           Type = "simple";
-          ExecStart = ''
-            ${tigger}/bin/tigger \
-              ${with cfg; escapeShellArgs ([jid password] ++ mucs)}
-          '';
           Restart = "always";
           RestartSec = "10min";
 
